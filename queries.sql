@@ -1,10 +1,9 @@
---Данный запрос считает общее количество покупателей из таблицы customers--
+--Данный запрос считает общее количество покупателей из таблицы customers
 select count(customer_id) as customers_count from customers c 
 
 --Данный запрос выводит имя и фамилию продавца, суммарную выручку с проданных товаров и количество проведенных сделок 
 --Сортировка по убыванию выручки, нули в конце
-
-   select distinct
+select distinct
     t.name, t.operations, floor(t.income) as income
 from (
     select

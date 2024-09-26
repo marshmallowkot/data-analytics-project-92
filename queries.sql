@@ -69,7 +69,7 @@ with tab as(
      		when age > 40 then '40+' end) as age_category 
      	from customers c
 )
-select age_category, count(age_category)
+select age_category, count(age_category) as age_count
 from tab
 group by age_category
 order by age_category;
@@ -89,7 +89,7 @@ with tab as (
 	where to_char(sale_date, 'YYYY-MM') is not null
   	group by date, customer_id
 )
-select distinct date, 
+select distinct date as selling_month, 
 count(customer_id) as total_customers,
 floor(sum(income)) as income
 from tab

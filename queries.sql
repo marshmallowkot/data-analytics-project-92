@@ -43,7 +43,7 @@ order by average_income;
 --Отсортирован по порядковому номеру дня недели и seller
 
 with tab as (
-  select 
+	select 
 		concat(first_name,' ',last_name) as seller, 
 		to_char(sale_date, 'day') as day_of_week, 
 		extract(isodow from sale_date) as dow,
@@ -54,6 +54,6 @@ with tab as (
 	inner join products p 
 	on s.product_id = p.product_id
 	group by seller, day_of_week, dow)
-select seller, day_of_week, floor(income)
+select seller, day_of_week, floor(income) as income
 from tab
 order by dow, seller;

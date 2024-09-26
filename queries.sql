@@ -53,7 +53,84 @@ with tab as (
 	on s.sales_person_id = e.employee_id
 	inner join products p 
 	on s.product_id = p.product_id
-	group by seller, day_of_week, dow)
+	group by seller, day_of_week, dow
+)
 select seller, day_of_week, floor(income) as income
 from tab
 order by dow, seller;
+
+--Данный запрос выводит количество покупателей в разных возрастных группах: 16-25, 26-40 и 40+
+--Отсортирован по возрастным группам
+
+with tab as(
+	select (case 
+		when age between 16 and 25 then '16-25'
+     		when age between 26 and 40 then '26-40'
+     		when age > 40 then '40+' end) as age_category 
+     	from customers c
+)
+select age_category, count(age_category)
+from tab
+group by age_category
+order by age_category;
+
+--Данный запрос выводит количество уникальных покупателей и выручке
+--Отсортирован по дате по возрастанию
+
+with tab as (
+	select to_char(sale_date, 'YYYY-MM') as date,
+        customer_id,
+        sum(quantity * price) as income
+	from  employees 
+	left join sales s 
+	on employee_id = s.sales_person_id  
+	left join products p 
+	on s.product_id = p.product_id
+	where to_char(sale_date, 'YYYY-MM') is not null
+  	group by date, customer_id
+)
+select distinct date, 
+count(customer_id) as total_customers,
+floor(sum(income)) as income
+from tab
+group by date
+order by date;
+
+--Данный запрос выводит таблицу с покупателями, первая покупка которых пприходилась на время проведения акции
+--Акционные товары отпускали со стоимостью равной 0
+--Отсортирован по id покупателя
+
+with tab as (
+	select concat(c.first_name,' ',c.last_name) as customer, 
+	min(sale_date) as sale_date, 
+    	sum(price * quantity)
+    	from customers c 
+    	left join sales s 
+	on c.customer_id = s.customer_id
+    	left join products p 
+	on s.product_id = p.product_id
+    	group by customer
+    	having sum(price * quantity) = 0
+), tab2 as (
+	select concat(c.first_name,' ',c.last_name) as customer, 
+	min(sale_date) as sale_date, 
+    	concat(e.first_name,' ',e.last_name) as seller
+    	from sales s
+    	left join customers c 
+	on s.customer_id = c.customer_id
+    	left join employees e  
+	on e.employee_id = s.sales_person_id
+    	group by customer, seller
+)
+select tab.customer, tab.sale_date, seller
+from tab
+inner join tab2 
+on tab.customer = tab2.customer 
+and tab.sale_date = tab2.sale_date
+group by tab.customer, tab.sale_date, seller
+order by customer;
+    
+    
+    
+
+

@@ -24,12 +24,12 @@ limit 10;
 select 
     concat(e.first_name, ' ', e.last_name) as seller, 
     floor(avg(p.price * s.quantity)) as average_income
-from sales as s 
+from sales as s
 inner join employees as e on s.sales_person_id = e.employee_id
 inner join products as p on s.product_id = p.product_id
 group by seller
-having floor(avg(p.price * s.quantity)) < (select avg(average_income) 
-from (select concat(e.first_name,' ',e.last_name) as seller, 
+having floor(avg(p.price * s.quantity)) < (select avg(average_income))
+from (select concat(e.first_name,' ',e.last_name) as seller,
 floor(avg(p.price * s.quantity)) as average_income
 from sales as s 
 inner join employees as e on s.sales_person_id = e.employee_id
@@ -46,10 +46,10 @@ with tab as (
 		to_char(sale_date, 'day') as day_of_week, 
 		extract(isodow from sale_date) as dow,
 		sum(price * quantity) as income
-	from sales s 
-	inner join employees e 
+	from sales as s 
+	inner join employees as e 
 	on s.sales_person_id = e.employee_id
-	inner join products p 
+	inner join products as p 
 	on s.product_id = p.product_id
 	group by seller, day_of_week, dow
 )
@@ -99,25 +99,21 @@ order by date;
 --Отсортирован по id покупателя
 
 with tab as (
-	select concat(c.first_name,' ',c.last_name) as customer, 
-	min(sale_date) as sale_date, 
+	select concat(c.first_name,' ',c.last_name) as customer,
+	min(sale_date) as sale_date,
     	sum(price * quantity)
-    	from customers c 
-    	left join sales s 
-	on c.customer_id = s.customer_id
-    	left join products p 
-	on s.product_id = p.product_id
+    	from customers as c
+    	left join sales as s on c.customer_id = s.customer_id
+    	left join products as p on s.product_id = p.product_id
     	group by customer
     	having sum(price * quantity) = 0
 ), tab2 as (
-	select concat(c.first_name,' ',c.last_name) as customer, 
-	min(sale_date) as sale_date, 
+	select concat(c.first_name,' ',c.last_name) as customer,
+	min(sale_date) as sale_date,
     	concat(e.first_name,' ',e.last_name) as seller
-    	from sales s
-    	left join customers c 
-	on s.customer_id = c.customer_id
-    	left join employees e  
-	on e.employee_id = s.sales_person_id
+    	from sales as s
+    	left join customers as c on s.customer_id = c.customer_id
+    	left join employees as e on e.employee_id = s.sales_person_id
     	group by customer, seller
 )
 select tab.customer, tab.sale_date, seller

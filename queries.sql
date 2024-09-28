@@ -30,7 +30,8 @@ inner join products as p on s.product_id = p.product_id
 group by seller
 having
     floor(
-        avg(p.price * s.quantity)) < (select avg(average_income)
+        avg(p.price * s.quantity)) < (
+	select avg(average_income)
         from (
             select
                 concat(e.first_name, ' ', e.last_name) as seller,
@@ -39,8 +40,8 @@ having
    	    inner join employees as e on s.sales_person_id = e.employee_id
 	    inner join products as p on s.product_id = p.product_id
 	    group by seller
-    ) as avg_income_sales
-)
+        ) as avg_income_sales
+    )
 order by average_income;
 
 --Данный запрос выводит имя и фамилию продавца, день недели и суммарную выручку
@@ -128,12 +129,7 @@ select tab.customer, tab.sale_date, tab2.seller
 from tab
 inner join tab2
     on tab.customer = tab2.customer
-and 
+        and
         tab.sale_date = tab2.sale_date
 group by tab.customer, tab.sale_date, tab2.seller
-order by customer;
-    
-    
-    
-
-
+order by tab.customer;

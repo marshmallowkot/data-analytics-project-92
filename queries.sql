@@ -5,10 +5,10 @@ select count(customer_id) as customers_count from customers;
 --суммарную выручку с проданных товаров и количество проведенных сделок
 --Отсортирован по убыванию выручки
 
-select 
-	concat(e.first_name,' ',e.last_name) as seller,
-	count(sales_id) as operations,
-	floor(sum(price * quantity)) as income
+select
+    concat(e.first_name, ' ', e.last_name) as seller,
+    count(s.sales_id) as operations,
+    floor(sum(p.price * s.quantity)) as income
 from sales as s
 inner join employees as e on s.sales_person_id = e.employee_id
 inner join products as p on s.product_id = p.product_id

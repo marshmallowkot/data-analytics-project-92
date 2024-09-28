@@ -101,7 +101,8 @@ with tab as (
     group by selling_month, s.customer_id
 )
 
-select distinct selling_month,
+select distinct
+    selling_month,
     count(customer_id) as total_customers,
     floor(sum(income)) as income
 from tab

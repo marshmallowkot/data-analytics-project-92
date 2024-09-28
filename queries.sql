@@ -118,34 +118,20 @@ with tab as (
     select
         concat(c.first_name, ' ', c.last_name) as customer,
         min(s.sale_date) as sale_date,
-        sum(p.price * s.quantity) as sum_sales
-    from customers as c
-    left join sales as s on c.customer_id = s.customer_id
-    left join products as p on s.product_id = p.product_id
-    group by customer
-    having sum(p.price * s.quantity) = 0
-),
-
-tab2 as (
-    select
-        concat(c.first_name, ' ', c.last_name) as customer,
-        min(s.sale_date) as sale_date,
+        sum(p.price * s.quantity) as sum_sales,
         concat(e.first_name, ' ', e.last_name) as seller
-    from sales as s
-    left join customers as c on s.customer_id = c.customer_id
-    left join employees as e on e.employee_id = s.sales_person_id
+    from sales s
+    left join customers c on s.customer_id = c.customer_id
+    left join products p on s.product_id = p.product_id
+    left join employees e on s.sales_person_id = e.employee_id
     group by customer, seller
+    having sum(price * quantity) = 0
 )
 
 select
     tab.customer,
     tab.sale_date,
-    tab2.seller
+    tab.seller
 from tab
-inner join tab2
-    on
-        tab.customer = tab2.customer
-        and
-        tab.sale_date = tab2.sale_date
-group by tab.customer, tab.sale_date, tab2.seller
+group by tab.customer, tab.sale_date, tab.seller
 order by tab.customer;

@@ -31,15 +31,15 @@ group by seller
 having
     floor(
         avg(p.price * s.quantity)) < (
-	select avg(average_income)
+        select avg(average_income)
         from (
             select
                 concat(e.first_name, ' ', e.last_name) as seller,
-        	floor(avg(p.price * s.quantity)) as average_income
+                floor(avg(p.price * s.quantity)) as average_income
             from sales as s
-   	    inner join employees as e on s.sales_person_id = e.employee_id
-	    inner join products as p on s.product_id = p.product_id
-	    group by seller
+            inner join employees as e on s.sales_person_id = e.employee_id
+            inner join products as p on s.product_id = p.product_id
+            group by seller
         ) as avg_income_sales
     )
 order by average_income;
@@ -52,7 +52,7 @@ with tab as (
         concat(e.first_name, ' ', e.last_name) as seller,
         to_char(s.sale_date, 'day') as day_of_week,
         extract(isodow from s.sale_date) as dow,
-	sum(p.price * s.quantity) as income
+        sum(p.price * s.quantity) as income
     from sales as s
     inner join employees as e on s.sales_person_id = e.employee_id
     inner join products as p on s.product_id = p.product_id
@@ -69,8 +69,8 @@ order by dow, seller;
 with tab as (
     select (case
         when age between 16 and 25 then '16-25'
-     	when age between 26 and 40 then '26-40'
-     	when age > 40 then '40+' end) as age_category
+        when age between 26 and 40 then '26-40'
+        when age > 40 then '40+' end) as age_category
     from customers
 )
 select age_category, count(age_category) as age_count
@@ -84,7 +84,7 @@ order by age_category;
 with tab as (
     select
         to_char(s.sale_date, 'YYYY-MM') as date,
-	s.customer_id,
+        s.customer_id,
         sum(s.quantity * p.price) as income
     from employees as e
     left join sales as s on e.employee_id = s.sales_person_id
@@ -107,19 +107,19 @@ order by date;
 
 with tab as (
     select
-	concat(c.first_name, ' ', c.last_name) as customer,
-	min(s.sale_date) as sale_date,
-    	sum(p.price * s.quantity)
+        concat(c.first_name, ' ', c.last_name) as customer,
+        min(s.sale_date) as sale_date,
+        sum(p.price * s.quantity)
     from customers as c
     left join sales as s on c.customer_id = s.customer_id
     left join products as p on s.product_id = p.product_id
     group by customer
-    	having sum(p.price * s.quantity) = 0
+    having sum(p.price * s.quantity) = 0
 ), tab2 as (
     select 
-	concat(c.first_name, ' ', c.last_name) as customer,
-	min(s.sale_date) as sale_date,
-    	concat(e.first_name, ' ', e.last_name) as seller
+        concat(c.first_name, ' ', c.last_name) as customer,
+        min(s.sale_date) as sale_date,
+        concat(e.first_name, ' ', e.last_name) as seller
     from sales as s
     left join customers as c on s.customer_id = c.customer_id
     left join employees as e on e.employee_id = s.sales_person_id
@@ -128,7 +128,8 @@ with tab as (
 select tab.customer, tab.sale_date, tab2.seller
 from tab
 inner join tab2
-    on tab.customer = tab2.customer
+    on 
+        tab.customer = tab2.customer
         and
         tab.sale_date = tab2.sale_date
 group by tab.customer, tab.sale_date, tab2.seller

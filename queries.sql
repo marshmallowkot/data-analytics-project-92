@@ -28,10 +28,13 @@ from sales as s
 inner join employees as e on s.sales_person_id = e.employee_id
 inner join products as p on s.product_id = p.product_id
 group by seller
-having floor(avg(p.price * s.quantity)) < (select avg(average_income)
-from (select concat(e.first_name, ' ', e.last_name) as seller,
-floor(avg(p.price * s.quantity)) as average_income
-from sales as s
+having 
+    floor(avg(p.price * s.quantity)) < (select avg(average_income)
+from (
+    select 
+        concat(e.first_name, ' ', e.last_name) as seller,
+        floor(avg(p.price * s.quantity)) as average_income
+    from sales as s
 inner join employees as e on s.sales_person_id = e.employee_id
 inner join products as p on s.product_id = p.product_id
 group by seller) as avg_income_sales)
@@ -44,7 +47,7 @@ with tab as (
     select
         concat(e.first_name, ' ', e.last_name) as seller,
 	to_char(s.sale_date, 'day') as day_of_week,
-	extract(isodow from sale_date) as dow,
+        extract(isodow from sale_date) as dow,
 	sum(p.price * s.quantity) as income
     from sales as s
     inner join employees as e on s.sales_person_id = e.employee_id

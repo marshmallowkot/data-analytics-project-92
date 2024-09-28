@@ -58,7 +58,11 @@ with tab as (
     inner join products as p on s.product_id = p.product_id
     group by seller, day_of_week, dow
 )
-select seller, day_of_week, floor(income) as income
+
+select 
+    seller, 
+    day_of_week, 
+    floor(income) as income
 from tab
 order by dow, seller;
 
@@ -70,7 +74,8 @@ with tab as (
     select (case
         when age between 16 and 25 then '16-25'
         when age between 26 and 40 then '26-40'
-        when age > 40 then '40+' end) as age_category
+        when age > 40 then '40+' 
+        end) as age_category
     from customers
 )
 select age_category, count(age_category) as age_count
@@ -128,7 +133,7 @@ with tab as (
 select tab.customer, tab.sale_date, tab2.seller
 from tab
 inner join tab2
-    on 
+    on
         tab.customer = tab2.customer
         and
         tab.sale_date = tab2.sale_date

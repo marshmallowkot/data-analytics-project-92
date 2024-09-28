@@ -29,15 +29,18 @@ inner join employees as e on s.sales_person_id = e.employee_id
 inner join products as p on s.product_id = p.product_id
 group by seller
 having
-    floor(avg(p.price * s.quantity)) < (select avg(average_income)
+    floor(
+        avg(p.price * s.quantity)) < (select avg(average_income)
         from (
             select
                 concat(e.first_name, ' ', e.last_name) as seller,
         	floor(avg(p.price * s.quantity)) as average_income
-    	    from sales as s
+            from sales as s
    	    inner join employees as e on s.sales_person_id = e.employee_id
 	    inner join products as p on s.product_id = p.product_id
-	    group by seller) as avg_income_sales)
+	    group by seller
+    ) as avg_income_sales
+)
 order by average_income;
 
 --Данный запрос выводит имя и фамилию продавца, день недели и суммарную выручку

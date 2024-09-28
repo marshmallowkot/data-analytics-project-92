@@ -91,7 +91,7 @@ order by age_category;
 
 with tab as (
     select
-        to_char(s.sale_date, 'YYYY-MM') as date,
+        to_char(s.sale_date, 'YYYY-MM') as selling_month,
         s.customer_id,
         sum(s.quantity * p.price) as income
     from employees as e
@@ -101,12 +101,12 @@ with tab as (
     group by date, s.customer_id
 )
 select
-    distinct date as selling_month,
+    distinct selling_month,
     count(customer_id) as total_customers,
     floor(sum(income)) as income
 from tab
-group by date
-order by date;
+group by selling_month
+order by selling_month;
 
 --Данный запрос выводит таблицу с покупателями, первая покупка которых 
 --пприходилась на время проведения акции
@@ -123,7 +123,8 @@ with tab as (
     left join products as p on s.product_id = p.product_id
     group by customer
     having sum(p.price * s.quantity) = 0
-), tab2 as (
+),
+tab2 as (
     select
         concat(c.first_name, ' ', c.last_name) as customer,
         min(s.sale_date) as sale_date,

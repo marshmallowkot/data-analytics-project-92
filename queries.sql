@@ -59,9 +59,9 @@ with tab as (
     group by seller, day_of_week, dow
 )
 
-select 
-    seller, 
-    day_of_week, 
+select
+    seller,
+    day_of_week,
     floor(income) as income
 from tab
 order by dow, seller;
@@ -74,11 +74,14 @@ with tab as (
     select (case
         when age between 16 and 25 then '16-25'
         when age between 26 and 40 then '26-40'
-        when age > 40 then '40+' 
-        end) as age_category
+        when age > 40 then '40+'
+    end) as age_category
     from customers
 )
-select age_category, count(age_category) as age_count
+
+select
+    age_category,
+    count(age_category) as age_count
 from tab
 group by age_category
 order by age_category;
@@ -97,7 +100,7 @@ with tab as (
     where to_char(s.sale_date, 'YYYY-MM') is not null
     group by date, s.customer_id
 )
-select 
+select
     distinct date as selling_month,
     count(customer_id) as total_customers,
     floor(sum(income)) as income
@@ -121,7 +124,7 @@ with tab as (
     group by customer
     having sum(p.price * s.quantity) = 0
 ), tab2 as (
-    select 
+    select
         concat(c.first_name, ' ', c.last_name) as customer,
         min(s.sale_date) as sale_date,
         concat(e.first_name, ' ', e.last_name) as seller
@@ -130,7 +133,11 @@ with tab as (
     left join employees as e on e.employee_id = s.sales_person_id
     group by customer, seller
 )
-select tab.customer, tab.sale_date, tab2.seller
+
+select
+    tab.customer,
+    tab.sale_date,
+    tab2.seller
 from tab
 inner join tab2
     on

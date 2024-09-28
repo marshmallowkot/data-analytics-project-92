@@ -120,12 +120,12 @@ with tab as (
         min(s.sale_date) as sale_date,
         sum(p.price * s.quantity) as sum_sales,
         concat(e.first_name, ' ', e.last_name) as seller
-    from sales s
-    left join customers c on s.customer_id = c.customer_id
-    left join products p on s.product_id = p.product_id
-    left join employees e on s.sales_person_id = e.employee_id
+    from sales as s
+    left join customers as c on s.customer_id = c.customer_id
+    left join products as p on s.product_id = p.product_id
+    left join employees as e on s.sales_person_id = e.employee_id
     group by customer, seller
-    having sum(price * quantity) = 0
+    having sum(p.price * s.quantity) = 0
 )
 
 select

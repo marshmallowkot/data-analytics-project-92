@@ -98,10 +98,10 @@ with tab as (
     left join sales as s on e.employee_id = s.sales_person_id
     left join products as p on s.product_id = p.product_id
     where to_char(s.sale_date, 'YYYY-MM') is not null
-    group by date, s.customer_id
+    group by selling_month, s.customer_id
 )
-select
-    distinct selling_month,
+
+select distinct selling_month,
     count(customer_id) as total_customers,
     floor(sum(income)) as income
 from tab
@@ -124,6 +124,7 @@ with tab as (
     group by customer
     having sum(p.price * s.quantity) = 0
 ),
+
 tab2 as (
     select
         concat(c.first_name, ' ', c.last_name) as customer,

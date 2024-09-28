@@ -91,9 +91,9 @@ order by age_category;
 
 with tab as (
     select
-        to_char(s.sale_date, 'YYYY-MM') as selling_month,
         s.customer_id,
-        sum(s.quantity * p.price) as income
+        sum(s.quantity * p.price) as income,
+        to_char(s.sale_date, 'YYYY-MM') as selling_month
     from employees as e
     left join sales as s on e.employee_id = s.sales_person_id
     left join products as p on s.product_id = p.product_id
@@ -101,7 +101,7 @@ with tab as (
     group by selling_month, s.customer_id
 )
 
-select distinct
+select
     selling_month,
     count(customer_id) as total_customers,
     floor(sum(income)) as income
@@ -118,7 +118,7 @@ with tab as (
     select
         concat(c.first_name, ' ', c.last_name) as customer,
         min(s.sale_date) as sale_date,
-        sum(p.price * s.quantity)
+        sum(p.price * s.quantity) as sum_sales
     from customers as c
     left join sales as s on c.customer_id = s.customer_id
     left join products as p on s.product_id = p.product_id
